@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Nikita_Puzankov
  */
-@FeignClient(name = "pc", url = "${pcurl}")
+@FeignClient(name = "pc", url = "${pcurl}", fallback = HystrixClientFallback.class)
 public interface ProductSpecificationRepository {
 
     @RequestMapping(method = RequestMethod.GET, path = "/catalog/{specificationId}")
     Object existsById(@PathVariable("specificationId") String specificationId);
+
 }

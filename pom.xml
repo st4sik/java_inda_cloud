@@ -29,6 +29,7 @@
         <module>pc</module>
         <module>po</module>
         <module>zuul-server</module>
+        <!--<module>auth-service</module>-->
     </modules>
 
     <dependencyManagement>
