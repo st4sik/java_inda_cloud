@@ -6,64 +6,66 @@ services:
     ports:
       - "8761:8761"
   mongo:
-    image: mongo
+    image: mongo:3.6
     ports:
       - "27017:27017"
   pc:
-      build: pc/
-      ports:
-        - '8081:8080'
-        - '5010:5005'
-      depends_on:
-        - eureka
-        - mongo
-      environment:
-        SPRING_DATA_MONGODB_HOST: mongo
-        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+    build: pc/
+    ports:
+      - '8081:8080'
+      - '5010:5005'
+    depends_on:
+      - eureka
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongo
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
   po:
-      build: po/
-      ports:
-        - '8082:8080'
-        - '5020:5005'
-      links:
-        - pc
-      depends_on:
-        - eureka
-        - mongo
-        - pc
-      environment:
-        SPRING_DATA_MONGODB_HOST: mongo
-        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-        pcurl: 'pc:8080'
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-        FEIGN_HYSTRIX_ENABLED: 'true'
+    build: po/
+    ports:
+      - '8082:8080'
+      - '5020:5005'
+    links:
+      - pc
+    depends_on:
+      - eureka
+      - mongo
+      - pc
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongo
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      pcurl: 'pc:8080'
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+      FEIGN_HYSTRIX_ENABLED: 'true'
   zuul-server:
-      build: zuul-server/
-      ports:
-        - '5016:5006'
-        - '8762:8762'
-      depends_on:
-        - eureka
-        - po
-        - pc
-      links:
-        - eureka:eureka
-      environment:
-        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-        MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: '*'
+    build: zuul-server/
+    ports:
+      - '5016:5006'
+      - '8762:8762'
+    depends_on:
+      - eureka
+      - po
+      - pc
+    links:
+      - eureka:eureka
+    environment:
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: '*'
 
-#  auth-service:
-#      build: auth-service/
-#      ports:
-#        - '8888:8888'
-#      depends_on:
-#        - eureka
-#        - mongo
-#      environment:
-#        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-#        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+  auth-service:
+    build: auth-service/
+    ports:
+      - '5017:5006'
+      - '8888:8080'
+    depends_on:
+      - eureka
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongo
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
 
 networks:
     default:
