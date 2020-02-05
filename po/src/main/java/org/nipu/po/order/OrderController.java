@@ -1,6 +1,9 @@
 package org.nipu.po.order;
 
+import org.nipu.po.PoApplication;
 import org.nipu.po.order.clients.ProductSpecificationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class OrderController {
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
     private final ProductOrderRepository orderRepository;
     private final ProductSpecificationRepository specificationRepository;
 
@@ -22,6 +26,10 @@ public class OrderController {
 
     @PutMapping("/catalog/{specificationId}/order")
     public ProductOrder orderProductBySpecificationId(@PathVariable String specificationId) {
+        logger.debug("This is a debug message");
+        logger.info("This is an info message");
+        logger.warn("This is a warn message");
+        logger.error("This is an error message");
         if (specificationRepository.existsById(specificationId) == null) {
             throw new RuntimeException("There is no product specification with Id: " + specificationId);
         }
