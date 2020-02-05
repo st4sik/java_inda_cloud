@@ -1,17 +1,14 @@
 version: '2'
 
 services:
-
   eureka:
     image: springcloud/eureka
     ports:
-      - '8761:8761'
-
+      - "8761:8761"
   mongo:
     image: mongo:3.6
     ports:
-      - '27017:27017'
-
+      - "27017:27017"
   pc:
     build: pc/
     ports:
@@ -24,7 +21,6 @@ services:
       SPRING_DATA_MONGODB_HOST: mongo
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-
   po:
     build: po/
     ports:
@@ -42,7 +38,6 @@ services:
       pcurl: 'pc:8080'
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
       FEIGN_HYSTRIX_ENABLED: 'true'
-
   zuul-server:
     build: zuul-server/
     ports:
@@ -73,30 +68,27 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
 
   elasticsearch:
-    image: elasticsearch:5.5.0
-    container_name: elasticsearch
+    image: elasticsearch:2.2
+    restart: always
     ports:
-      - '9200:9200'
-      - '9300:9300'
+      - 9200:9200
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
 
   logstash:
-    image: logstash:5.5.0
-    container_name: logstash
-    command: logstash -f /etc/logstash/conf.d/logstash.conf
-    volumes:
-      - ./logstash/config:/etc/logstash/conf.d
+    build: logstash
+    restart: always
+    command: logstash -f /config-dir/logstash.conf
     ports:
-      - '5000:5000'
+      - 5044:5044
     links:
       - elasticsearch
 
   kibana:
-    image: kibana:5.5.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    image: kibana:4.4
+    restart: always
     ports:
-      - '5601:5601'
+      - 5601:5601
     links:
       - elasticsearch
 
