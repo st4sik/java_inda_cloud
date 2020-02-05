@@ -4,6 +4,8 @@ API-Gateway
 
 Discovery Server
 
+ELK
+
 Circuit Breaker
 
 OAuth 2.0
