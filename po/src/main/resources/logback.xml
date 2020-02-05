@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <springProperty name="LOGSTASH_HOST" source="192.168.99.100:5000"/>
-    <springProperty name="LOGGER_NAME" source="PO"/>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>
+                %green(%d{yyyy-MM-dd HH:mm:ss}) %magenta([%thread]) %blue(%-5level) %yellow(%logger{36}) - %msg%n
+            </Pattern>
         </layout>
-    </appender>
-
-    <appender name="FILEROLLING"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>/tmp/rolling-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>1024KB</maxFileSize>
-            <maxHistory>7</maxHistory>
-            <totalSizeCap>10GB</totalSizeCap>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </encoder>
     </appender>
 
     <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>logstash:5000</destination>
+        <!-- encoder is required -->
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+
+        <keepAliveDuration>5 minutes</keepAliveDuration>
     </appender>
 
-    <logger name="PO" level="${LOGGER_LEVEL:-DEBUG}" additivity="false">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILEROLLING" />
-        <appender-ref ref="STASH" />
+    <logger name="org.hibernate" level="TRACE">
+        <appender-ref ref="STASH"/>
     </logger>
 
-    <root level="${ROOT_LEVEL:-WARN}">
-        <appender-ref ref="STDOUT" />
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="STASH"/>
     </root>
 </configuration>
