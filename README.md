@@ -4,6 +4,8 @@ API-Gateway
 
 Discovery Server
 
+Circuit Breaker
+
 OAuth 2.0
 
 Docker
