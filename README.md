@@ -1,8 +1,11 @@
 ### Features
 
 API-Gateway
+
 Discovery Server
+
 OAuth 2.0
+
 Docker
 
 ### Deploy
